@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Fetch API - GET Tags</title>
+</head>
+<body>
+    <h1>Lista de Tags</h1>
+    <ul id="tagList"></ul>
+
+    <script>
+        async function fetchTags() {
+            try {
+                const response = await fetch('https://localhost:7080/api/tag');
+    
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                console.log('Tags recebidas:', data);
+    
+                const tagList = document.getElementById('tagList');
+                tagList.innerHTML = '';
+    
+                data.forEach(tag => {
+                    const li = document.createElement('li');
+    
+                    const nome = tag.nomeTag ?? '(sem nome)';
+                    const usuarioId = tag.idUsuario ?? '(sem usuário)';
+    
+                    li.textContent = `Nome: ${nome} | Usuário ID: ${usuarioId}`;
+                    tagList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar tags:', error);
+            }
+        }
+    
+        window.onload = fetchTags;
+    </script>
+    
+</body>
+</html>
