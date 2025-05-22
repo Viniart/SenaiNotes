@@ -37,6 +37,44 @@ namespace SenaiNotes.Controller
                 return BadRequest(validacao.Errors);
             }
 
+            if (anotacao.ArquivoImagem != null)
+            {
+                #region Verificação Tipo Imagem
+                var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+
+                if (!tiposPermitidos.Contains(anotacao.ArquivoImagem.ContentType))
+                {
+                    return BadRequest("Apenas arquivos de imagem são permitidos (JPEG, PNG, GIF, WEBP).");
+                }
+                #endregion
+
+                var pastaDestino = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
+                //if(!Directory.Exists(pastaDestino))
+                //    Directory.CreateDirectory(pastaDestino);
+
+                #region Limpando Nome Arquivo
+                // Limpando nome removendo caracteres inválidos
+                var nomeAnotacao = string.Concat(anotacao.TituloAnotacao.Where(c => !Path.GetInvalidFileNameChars().Contains(c)));
+
+                // Pego a data atual
+                var dataAtual = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var extensao = Path.GetExtension(anotacao.ArquivoImagem.FileName);
+
+                var novoNomeArquivo = $"{nomeAnotacao}_{dataAtual}{extensao}";
+                #endregion
+
+                // Novo Nome Arquivo - arquivo.FileName
+                var caminhoCompleto = Path.Combine(pastaDestino, novoNomeArquivo);
+
+                using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                {
+                    anotacao.ArquivoImagem.CopyTo(stream);
+                }
+
+                anotacao.ImagemAnotacao = novoNomeArquivo;
+            }
+
             _repository.CadastrarAnotacao(anotacao);
 
             return Created();

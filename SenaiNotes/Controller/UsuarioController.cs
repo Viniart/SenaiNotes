@@ -44,7 +44,11 @@ namespace SenaiNotes.Controller
 
             var token = tokenService.GenerateToken(usuario.EmailUsuario);
 
-            return Ok(token);
+            return Ok(new
+            {
+                token,
+                usuario
+            });
         }
 
         [HttpPost]

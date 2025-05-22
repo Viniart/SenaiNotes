@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 using SenaiNotes.Context;
 using SenaiNotes.Interfaces;
 using SenaiNotes.Repositories;
@@ -37,6 +39,11 @@ builder.Services.AddCors(
         );
     });
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 104857600;
+});
+
 var app = builder.Build();
 
 app.UseCors("minhasOrigens");
@@ -48,6 +55,20 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
+});
+
+app.UseStaticFiles();
+
+var pastaDestino = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
+if (!Directory.Exists(pastaDestino))
+    Directory.CreateDirectory(pastaDestino);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    RequestPath = "/imagens"
 });
 
 app.Run();
