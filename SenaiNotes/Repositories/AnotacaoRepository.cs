@@ -9,10 +9,10 @@ namespace SenaiNotes.Repositories
 {
     public class AnotacaoRepository : GenericRepository<Anotacao>, IAnotacaoRepository
     {
-        private TagRepository tagRepository;
-        public AnotacaoRepository(SenaiNotesDatabaseContext context) : base(context)
+        private ITagRepository _tagRepository;
+        public AnotacaoRepository(SenaiNotesDatabaseContext context, ITagRepository tagRepository) : base(context)
         {
-            tagRepository = new TagRepository(context);
+            _tagRepository = tagRepository;
         }
 
         public Anotacao? ArquivarAnotacao(int id)
@@ -41,7 +41,7 @@ namespace SenaiNotes.Repositories
 
             foreach (var item in anotacao.Tags)
             {
-                var tag = tagRepository.BuscarPorUsuarioeId(anotacao.IdUsuario, item);
+                var tag = _tagRepository.BuscarPorUsuarioeId(anotacao.IdUsuario, item);
 
                 if (tag == null)
                 {

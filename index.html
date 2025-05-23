@@ -11,7 +11,7 @@
     <script>
         async function fetchTags() {
             try {
-                const response = await fetch('https://localhost:7080/api/tag');
+                const response = await fetch('https://apisenainotesgrupo5temp.azurewebsites.net/api/Nota/listar/1');
     
                 if (!response.ok) {
                     throw new Error(`Erro na requisição: ${response.status}`);
