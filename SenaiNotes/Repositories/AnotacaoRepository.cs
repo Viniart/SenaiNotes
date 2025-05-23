@@ -7,12 +7,14 @@ using SenaiNotes.ViewModels;
 
 namespace SenaiNotes.Repositories
 {
-    public class AnotacaoRepository : GenericRepository<Anotacao>, IAnotacaoRepository
+    public class AnotacaoRepository : IAnotacaoRepository
     {
         private ITagRepository _tagRepository;
-        public AnotacaoRepository(SenaiNotesDatabaseContext context, ITagRepository tagRepository) : base(context)
+        private readonly SenaiNotesDatabaseContext _context;
+        public AnotacaoRepository(SenaiNotesDatabaseContext context, ITagRepository tagRepository)
         {
             _tagRepository = tagRepository;
+            _context = context;
         }
 
         public Anotacao? ArquivarAnotacao(int id)
@@ -109,6 +111,45 @@ namespace SenaiNotes.Repositories
                 .ToList();
 
             return anotacoes;
+        }
+
+        public Anotacao? ObterPorId(int id)
+        {
+            return _context.Anotacaos.Find(id);
+        }
+
+        public List<Anotacao> ListarTodos()
+        {
+            return _context.Anotacaos.ToList();
+        }
+
+        public void Cadastrar(Anotacao? entidade)
+        {
+            _context.Anotacaos.Add(entidade);
+            _context.SaveChanges();
+        }
+
+        public Anotacao? Atualizar(int id, Anotacao entidade)
+        {
+            var existente = _context.Anotacaos.Find(id);
+            if (existente == null) return null;
+
+            _context.Entry(existente).CurrentValues.SetValues(entidade);
+            _context.SaveChanges();
+
+            return existente;
+
+        }
+
+        public Anotacao? Deletar(int id)
+        {
+            var existente = _context.Anotacaos.Find(id);
+            if (existente == null) return null;
+
+            _context.Anotacaos.Remove(existente);
+            _context.SaveChanges();
+
+            return existente;
         }
     }
 }

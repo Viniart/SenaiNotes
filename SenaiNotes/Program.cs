@@ -19,7 +19,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<SenaiNotesDatabaseContext>();
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IAnotacaoRepository, AnotacaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();

@@ -5,10 +5,13 @@ using SenaiNotes.Services;
 
 namespace SenaiNotes.Repositories
 {
-    public class UsuarioRepository : GenericRepository<Usuario>, IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
-        public UsuarioRepository(SenaiNotesDatabaseContext context) : base(context)
+
+        private readonly SenaiNotesDatabaseContext _context;
+        public UsuarioRepository(SenaiNotesDatabaseContext context)
         {
+            _context = context;
         }
 
         public void CadastrarUsuario(Usuario usuario)
@@ -37,6 +40,45 @@ namespace SenaiNotes.Repositories
             if (resultado == true) return usuario;
 
             return null;
+        }
+
+        public Usuario? ObterPorId(int id)
+        {
+            return _context.Usuarios.Find(id);
+        }
+
+        public List<Usuario> ListarTodos()
+        {
+            return _context.Usuarios.ToList();
+        }
+
+        public void Cadastrar(Usuario? entidade)
+        {
+            _context.Usuarios.Add(entidade);
+            _context.SaveChanges();
+        }
+
+        public Usuario? Atualizar(int id, Usuario entidade)
+        {
+            var existente = _context.Usuarios.Find(id);
+            if (existente == null) return null;
+
+            _context.Entry(existente).CurrentValues.SetValues(entidade);
+            _context.SaveChanges();
+
+            return existente;
+
+        }
+
+        public Usuario? Deletar(int id)
+        {
+            var existente = _context.Usuarios.Find(id);
+            if (existente == null) return null;
+
+            _context.Usuarios.Remove(existente);
+            _context.SaveChanges();
+
+            return existente;
         }
     }
 }
